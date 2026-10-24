@@ -1,5 +1,3 @@
-"""Ground truth by construction: the test builds the PDF, so the expected numbers are known first."""
-
 import pytest
 from fpdf import FPDF
 
@@ -10,7 +8,7 @@ def make_pdf(path, fmt, orientation="P"):
     pdf = FPDF(orientation=orientation, unit="pt", format=fmt)
     pdf.add_page()
     pdf.set_font("Helvetica", size=12)
-    pdf.cell(text="ground truth by construction")
+    pdf.cell(text="hello")
     pdf.output(str(path))
     return path
 
@@ -24,7 +22,7 @@ def make_pdf(path, fmt, orientation="P"):
         ((300, 500), "P", 300.0, 500.0, None),
     ],
 )
-def test_page_size_is_read_as_stored(tmp_path, fmt, orientation, width, height, paper):
+def test_page_size(tmp_path, fmt, orientation, width, height, paper):
     spec = read(make_pdf(tmp_path / "t.pdf", fmt, orientation))
     assert spec.page.value.width_pt == pytest.approx(width, abs=0.005)
     assert spec.page.value.height_pt == pytest.approx(height, abs=0.005)
@@ -33,12 +31,12 @@ def test_page_size_is_read_as_stored(tmp_path, fmt, orientation, width, height, 
     assert spec.page.confidence == 1.0
 
 
-def test_missing_page_is_an_error(tmp_path):
+def test_missing_page(tmp_path):
     with pytest.raises(ValueError, match="does not exist"):
         read(make_pdf(tmp_path / "t.pdf", "A4"), page_number=2)
 
 
-def test_to_dict_is_json_shaped(tmp_path):
+def test_to_dict(tmp_path):
     d = read(make_pdf(tmp_path / "t.pdf", "A4")).to_dict()
     assert d["page"]["value"]["paper"] == "A4"
     assert d["page"]["confidence"] == 1.0

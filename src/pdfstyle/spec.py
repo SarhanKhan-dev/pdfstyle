@@ -1,9 +1,5 @@
-"""The style spec: what pdfstyle reports about a page.
-
-Every field is a Reading: the value, a confidence, and the evidence it came from. The one rule of
-confidence: 1.0 is reserved for values the file stores as such (STORED). Anything inferred must be
-reported lower, so a caller can always tell a fact from a judgement.
-"""
+"""What pdfstyle reports about a page. Every field is a Reading with a confidence and its evidence:
+1.0 means read from the file as stored, anything inferred is lower."""
 
 from __future__ import annotations
 
@@ -42,7 +38,6 @@ class PageSize:
 
     @property
     def paper(self) -> str | None:
-        """The standard paper name this size matches within one point, in either orientation."""
         short, long = sorted((self.width_pt, self.height_pt))
         for name, (w, h) in PAPER_SIZES_PT.items():
             if abs(short - w) <= 1.0 and abs(long - h) <= 1.0:
@@ -52,12 +47,8 @@ class PageSize:
 
 @dataclass(frozen=True)
 class FontRun:
-    """One font resource at one size, and how much of the page's text it carries.
-
-    Facts, as stored: fontname, size_pt (from the text matrix), chars, share, subset_tag.
-    Parsed from the name by convention: family, weight (CSS 100-900), italic.
-    Inferred from the size: nominal_pt, the half-point size the designer most likely typed, or None.
-    """
+    """One font at one size. fontname, size_pt, chars, share and subset_tag are as stored;
+    family, weight and italic are parsed from the name; nominal_pt is the snapped size, or None."""
 
     fontname: str
     size_pt: float

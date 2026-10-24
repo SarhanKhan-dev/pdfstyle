@@ -1,39 +1,40 @@
 # pdfstyle
 
-Read the visual style of a PDF page as a spec: page size, margins, fonts, colours, rules, tinted
-boxes and logo, as JSON, with a confidence and the evidence for every field.
+Reads the visual style of a PDF page and returns it as JSON: page size, fonts and sizes, and soon
+colours, margins, rules, tinted boxes and the logo.
 
-A PDF stores geometry, not design. Margins, "the heading size" and "the brand colour" were never
-written into the file; they have to be measured and judged. Parsers such as pdfminer.six and
-pdfplumber give you the coordinates and raw values. pdfstyle is the layer above: it turns them into
-the spec a template engine needs, and tells you how sure it is.
+PDFs store geometry, not design. Nothing in the file says "the heading is 13 pt navy" or "the margin
+is 36 pt"; that has to be measured and judged. Parsers like pdfminer.six and pdfplumber give you the
+raw coordinates and values. pdfstyle sits on top, turns them into a style spec, and says how sure it
+is about each part.
 
-## The accuracy contract
-
-- A value the file stores as such comes back exactly as stored, with confidence `1.0`.
-- A value the file does not store is inferred, reported with a confidence below `1.0` and the
-  evidence it rests on. On the test corpus every inferred field is either right or flagged, and the
-  share that is right is measured and published per release. No silent wrong value.
+Every field comes with a confidence and the evidence behind it. 1.0 means the value was read from
+the file as stored. Anything inferred (which colour is the primary, where the margin is, the family
+parsed out of a font name) is reported lower, with a note on where it came from. The aim is that
+nothing is wrong silently: on the test set each inferred field is either right or flagged.
 
 ## Status
 
-`0.0.1`: page size, and fonts with sizes. Font names are parsed by producer conventions (subset tags,
-glued or hyphenated style words, Monotype suffixes) into family, CSS weight and slant; sizes are the
-stored text-matrix sizes, with a nominal half-point size added only when the stored value is within
-0.08 pt of it. Built in the open, one field at a time, each with its generated ground truth. Colours
-next, then margins, rules and fills, the logo, roles and confidence.
+Done: page size, fonts and sizes.
 
-## Use
+Next: colours, margins, rules and fills, logo, roles (body, heading, meta), a CLI, a PyPI release.
+
+## Install
 
 ```bash
 pip install pdfstyle
 ```
 
+## Use
+
 ```python
 import pdfstyle
 
 spec = pdfstyle.read("brief.pdf")
-print(spec.page.value.paper, spec.page.evidence)
+print(spec.page.value.paper)
+for run in spec.fonts.value:
+    print(run.family, run.weight, run.size_pt, run.share)
+print(spec.to_dict())
 ```
 
 ## Develop
@@ -44,6 +45,8 @@ python -m venv .venv
 .venv/Scripts/python -m pytest -q
 ```
 
+Tests generate their own PDFs with fpdf2, so the expected values are known up front.
+
 ## Licence
 
-Apache-2.0. See `LICENSE` and `NOTICE`.
+Apache-2.0.

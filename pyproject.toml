@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pdfstyle"
 version = "0.0.1"
-description = "Read the visual style of a PDF page (page size, margins, fonts, colours, rules, logo) as a JSON spec with confidence and evidence per field."
+description = "Read a PDF page's visual style (size, fonts, colours, margins, logo) as JSON, with a confidence per field"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
