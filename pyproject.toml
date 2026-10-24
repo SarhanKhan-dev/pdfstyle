@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pdfstyle"
+version = "0.0.1"
+description = "Read the visual style of a PDF page (page size, margins, fonts, colours, rules, logo) as a JSON spec with confidence and evidence per field."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.11"
+authors = [{ name = "Sarhan Khan" }]
+keywords = ["pdf", "design", "style", "fonts", "colours", "margins", "design-tokens", "brand"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Text Processing",
+  "Typing :: Typed",
+]
+dependencies = ["pdfplumber>=0.11"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "fpdf2>=2.8", "ruff>=0.6"]
+
+[project.urls]
+Homepage = "https://github.com/SarhanKhan-dev/pdfstyle"
+Issues = "https://github.com/SarhanKhan-dev/pdfstyle/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pdfstyle"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
