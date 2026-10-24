@@ -17,8 +17,11 @@ the spec a template engine needs, and tells you how sure it is.
 
 ## Status
 
-`0.0.1`: page size only. Built in the open, one field at a time, each with its generated ground
-truth. Fonts and sizes next, then colours, margins, rules and fills, the logo, roles and confidence.
+`0.0.1`: page size, and fonts with sizes. Font names are parsed by producer conventions (subset tags,
+glued or hyphenated style words, Monotype suffixes) into family, CSS weight and slant; sizes are the
+stored text-matrix sizes, with a nominal half-point size added only when the stored value is within
+0.08 pt of it. Built in the open, one field at a time, each with its generated ground truth. Colours
+next, then margins, rules and fills, the logo, roles and confidence.
 
 ## Use
 

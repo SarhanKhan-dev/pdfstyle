@@ -50,16 +50,38 @@ class PageSize:
         return None
 
 
+@dataclass(frozen=True)
+class FontRun:
+    """One font resource at one size, and how much of the page's text it carries.
+
+    Facts, as stored: fontname, size_pt (from the text matrix), chars, share, subset_tag.
+    Parsed from the name by convention: family, weight (CSS 100-900), italic.
+    Inferred from the size: nominal_pt, the half-point size the designer most likely typed, or None.
+    """
+
+    fontname: str
+    size_pt: float
+    chars: int
+    share: float
+    subset_tag: str | None
+    family: str
+    weight: int
+    italic: bool
+    nominal_pt: float | None
+
+
 @dataclass
 class StyleSpec:
     page: Reading[PageSize]
+    fonts: Reading[list[FontRun]]
 
     def to_dict(self) -> dict[str, Any]:
         size = self.page.value
         return {
-            "page": {
-                "value": {**asdict(size), "paper": size.paper, "landscape": size.landscape},
-                "confidence": self.page.confidence,
-                "evidence": self.page.evidence,
-            }
+            "page": _reading({**asdict(size), "paper": size.paper, "landscape": size.landscape}, self.page),
+            "fonts": _reading([asdict(run) for run in self.fonts.value], self.fonts),
         }
+
+
+def _reading(value: Any, reading: Reading[Any]) -> dict[str, Any]:
+    return {"value": value, "confidence": reading.confidence, "evidence": reading.evidence}
